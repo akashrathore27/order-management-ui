@@ -1,6 +1,7 @@
 package com.ecommerce.controllers;
 
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -10,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.ecommerce.models.ProductDetails;
 import com.ecommerce.payload.*;
 import com.ecommerce.repository.ProductRepo;
+import com.ecommerce.services.impl.ReportService;
+import net.sf.jasperreports.engine.JRException;
 import org.hibernate.engine.jdbc.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +28,7 @@ import com.ecommerce.services.ProductService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class ProductController {
 
 	@Autowired
@@ -36,6 +39,9 @@ public class ProductController {
 
 	@Autowired
 	private FileService fileService;
+
+	@Autowired
+	private ReportService reportService;
 
 	@Value("${project.image}")
 	private String path;
@@ -49,6 +55,13 @@ public class ProductController {
 		ProductDto createProperty = this.productService.createProduct(productDto, ownerId, categoryId);
 		return new ResponseEntity<ProductDto>(createProperty, HttpStatus.CREATED);
 	}
+
+	//report generated
+	@GetMapping("/report/{format}")
+	public String generatedReport(@PathVariable  String format) throws JRException, FileNotFoundException {
+		return  reportService.exportReportForProduct(format);
+	}
+
 
 	// get by owner
 	@GetMapping("/owner/{ownerId}/products")

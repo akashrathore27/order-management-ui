@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		String requestToken = request.getHeader("Authorization");
 
-		// Bearer 2352523sdgsg
+		// Bearer 2352523
 
 		System.out.println(requestToken);
 

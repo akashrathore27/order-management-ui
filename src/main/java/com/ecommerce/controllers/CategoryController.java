@@ -1,9 +1,12 @@
 package com.ecommerce.controllers;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import com.ecommerce.services.impl.ReportService;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,24 +19,31 @@ import com.ecommerce.services.CategoryServices;
 
 @RestController
 @RequestMapping("/api/category")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 public class CategoryController {
 
 	@Autowired
 	private CategoryServices categoryServices;
 
+	@Autowired
+	private ReportService reportService;
 	// POST-create product
 	@PostMapping("/")
-	public ResponseEntity<CategoryDto> createProduct(@Valid @RequestBody CategoryDto productDto) {
+	public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto productDto) {
 
 		CategoryDto createProductDto = this.categoryServices.createCategory(productDto);
 		return new ResponseEntity<>(createProductDto, HttpStatus.CREATED);
 	}
+	@GetMapping("/report/{format}")
+	public String generatedReport(@PathVariable  String format) throws JRException, FileNotFoundException {
+		return  reportService.exportReportForCategory(format);
+	}
+
 
 	// update
 
 	@PutMapping("/{categoryId}")
-	public ResponseEntity<CategoryDto> updateProduct(@Valid @RequestBody CategoryDto productDto,
+	public ResponseEntity<CategoryDto> updateCategory(@Valid @RequestBody CategoryDto productDto,
 													  @PathVariable Integer categoryId) {
 
 		CategoryDto updatedProductDto = this.categoryServices.updateCategory(productDto, categoryId);
@@ -42,7 +52,7 @@ public class CategoryController {
 
 	// Delete
 	@DeleteMapping("/{categoryId}")
-	public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Integer categoryId) {
+	public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Integer categoryId) {
 		this.categoryServices.deleteCategory(categoryId);
 
 		return new ResponseEntity<ApiResponse>(new ApiResponse("category Deleted Successfully", true), HttpStatus.OK);
@@ -61,5 +71,6 @@ public class CategoryController {
 		return new ResponseEntity<CategoryDto>(categoryDto,HttpStatus.OK);
 
 	}
+
 
 }

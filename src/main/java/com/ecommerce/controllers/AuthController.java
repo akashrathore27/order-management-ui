@@ -1,5 +1,9 @@
 package com.ecommerce.controllers;
 
+import com.ecommerce.models.Customer;
+import com.sun.xml.bind.v2.schemagen.episode.SchemaBindings;
+import org.apache.catalina.mapper.Mapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +41,8 @@ public class AuthController {
 
 	@Autowired
 	private CustomerService customerService;
+	private ModelMapper mapper;
+
 
 	@PostMapping("/login")
 	public ResponseEntity<JwtAuthResponse> createToken(@RequestBody JwtAuthRequest request) throws Exception {
@@ -47,8 +53,13 @@ public class AuthController {
 
 		String token = this.jwtTokenHelper.generateToken(userDetails);
 
+
+
+
 		JwtAuthResponse response = new JwtAuthResponse();
 		response.setToken(token);
+
+//		response.setCustomer(this.mapper.map((Customer)userDetails,CustomerDto.class));
 		return new ResponseEntity<JwtAuthResponse>(response, HttpStatus.OK);
 
 	}
@@ -63,7 +74,7 @@ public class AuthController {
 			this.authenticationManager.authenticate(authenticationToken);
 
 		} catch (BadCredentialsException e) {
-			System.out.println("Invalid Detials !!");
+			System.out.println("Invalid Details !!");
 			throw new ApiException("Invalid username or password !!");
 		}
 

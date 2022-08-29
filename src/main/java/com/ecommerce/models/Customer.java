@@ -60,13 +60,12 @@ public class Customer implements UserDetails  {
 	@OneToMany(mappedBy = "customer", cascade =CascadeType.ALL,fetch = FetchType.LAZY)
 	private List<ProductDetails> product = new ArrayList<>();
 
-	@JsonIgnore
-	@ManyToOne
-	private Owner owner;
-
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "customer_role", joinColumns = @JoinColumn(name = "customer", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role", referencedColumnName = "id"))
 	private Set<Role> roles = new HashSet<>();
+
+	@ManyToOne
+	private Owner owner;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

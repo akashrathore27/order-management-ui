@@ -1,9 +1,12 @@
 package com.ecommerce.controllers;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import com.ecommerce.services.impl.ReportService;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,9 @@ public class OwnerController {
 	
 	@Autowired
 	private OwnerService OwnerService;
+
+	@Autowired
+	private ReportService reportService;
 	
 	//POST -create user
 	@PostMapping("/")
@@ -28,8 +34,13 @@ public class OwnerController {
 		OwnerDto createOwnerDto = this.OwnerService.createOwner(OwnerDto);
 		return new ResponseEntity<>(createOwnerDto, HttpStatus.CREATED);
 	}
-	
-	
+	@GetMapping("/report/{format}")
+	public String generatedReport(@PathVariable  String format) throws JRException, FileNotFoundException {
+		return  reportService.exportReportForOwner(format);
+	}
+
+
+
 	//PUT -update user
 	
 	@PutMapping("/{OwnerId}")
